@@ -19,9 +19,13 @@ sl-tab-panel {
     gap: var(--sl-spacing-medium);
     margin-bottom: var(--sl-spacing-medium);
 }
+sl-qr-code {
+    align-self: center;
+}
+
 
 sl-input[data-invalid]::part(base),
-sl-select[data-nvalid]::part(combobox) {
+sl-select[data-invalid]::part(combobox) {
     border-color: var(--sl-color-danger-600);
 }
 [data-invalid]::part(form-control-label),
@@ -30,4 +34,9 @@ sl-select[data-nvalid]::part(combobox) {
 }
 [hidden] {
     display: none !important;
+}
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

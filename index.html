@@ -7,6 +7,7 @@
         <meta name="description" content="Generate QR codes for various types of data">
     </head>
     <body>
+        <h1 class="centered">QR Code maker</h1>
         <sl-tab-group id="type-selector">
             <sl-tab slot="nav" panel="text">Text</sl-tab>
             <sl-tab slot="nav" panel="url">URL</sl-tab>
@@ -42,12 +43,15 @@
             <sl-tab-panel name="wifi">
                 <div class="options">
                     <sl-input label="SSID" id="wifi-ssid" required></sl-input>
-                    <sl-input label="Password" id="wifi-password"></sl-input>
-                    <sl-select label="Security" id="wifi-security">
-                        <sl-option value="WPA">WPA</sl-option>
-                        <sl-option value="WEP">WEP</sl-option>
+                    <sl-input label="Password" id="wifi-password" type="password" password-toggle disabled></sl-input>
+                    <sl-select label="Security" id="wifi-security" required value="nopass">
                         <sl-option value="nopass">No password</sl-option>
+                        <sl-option value="WEP">WEP</sl-option>
+                        <sl-option value="WPA">WPA</sl-option>
+                        <sl-option value="WPA2">WPA2</sl-option>
+                        <sl-option value="WPA3">WPA3</sl-option>
                     </sl-select>
+                    <script type="module" src="wifi.ts"></script>
                     <sl-checkbox id="wifi-hidden">Hidden</sl-checkbox>
                 </div>
             </sl-tab-panel>
@@ -62,14 +66,14 @@
             </sl-tab-panel>
         </sl-tab-group>
         <div class="padded options">
-            <sl-select label="Error correction" id="error-correction">
-                <sl-option value="L">Low</sl-option>
-                <sl-option value="M">Medium</sl-option>
-                <sl-option value="Q">Quartile</sl-option>
-                <sl-option value="H">High</sl-option>
+            <sl-select label="Error correction" id="error-correction" required value="M">
+                <sl-option value="L">Low (~7%)</sl-option>
+                <sl-option value="M">Medium (~15%)</sl-option>
+                <sl-option value="Q">Quartile (~25%)</sl-option>
+                <sl-option value="H">High (~30%)</sl-option>
             </sl-select>
             <sl-button id="generate">Generate</sl-button>
-            <sl-qr-code id="qr" hidden></sl-qrcode>
+            <sl-qr-code id="qr" hidden error-correction="M"></sl-qrcode>
         </div>
         <script src="main.ts" type="module"></script>
     </body>

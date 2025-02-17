@@ -1,15 +1,15 @@
 import '@shoelace-style/shoelace/dist/themes/light.css';
 import '@shoelace-style/shoelace/dist/themes/dark.css';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
-import '@shoelace-style/shoelace/dist/components/select/select.js';
+import SlSelect from '@shoelace-style/shoelace/dist/components/select/select.js';
 import '@shoelace-style/shoelace/dist/components/tab/tab.js';
 import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
 import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
-import '@shoelace-style/shoelace/dist/components/input/input.js';
+import SlInput from '@shoelace-style/shoelace/dist/components/input/input.js';
 import '@shoelace-style/shoelace/dist/components/option/option.js';
 import '@shoelace-style/shoelace/dist/components/qr-code/qr-code.js';
 import './style.css';
-import * as Shoelace from '@shoelace-style/shoelace';
+import type * as Shoelace from '@shoelace-style/shoelace';
 import { registerIconLibrary } from '@shoelace-style/shoelace';
 
 registerIconLibrary('default', {
@@ -70,7 +70,7 @@ data['sms'] = (abort) => {
         return abort();
     }
     const message = document.getElementById('sms-message') as Shoelace.SlInput;
-    return `sms:${phone.value}` + (message.value ? `?body=${message.value}` : '');
+    return `sms:${phone.value}` + (message.value ? `:${message.value}` : '');
 }
 
 // wifi
@@ -82,7 +82,7 @@ data['wifi'] = (abort) => {
     if (!ssid.reportValidity()) {
         return abort();
     }
-    if (!password.value && security.value[0] !== 'nopass') {
+    if (!password.value && security.value !== 'nopass') {
         password.setCustomValidity('Password is required');
         return abort();
     }
@@ -92,14 +92,12 @@ data['wifi'] = (abort) => {
     if (!hidden.reportValidity()) {
         return abort();
     }
-    const params = new URLSearchParams();
-    params.append('S', ssid.value);
-    params.append('T', security.value[0]);
-    params.append('P', password.value);
-    if (hidden.value) {
-        params.append('H', hidden.value);
-    }
-    return `WIFI:${params.toString()}`;
+    let correctedSSID = ssid.value.replaceAll(';','\\;');
+    correctedSSID = correctedSSID.replaceAll(',','\\,');
+    correctedSSID = correctedSSID.replaceAll(':','\\:');
+    correctedSSID = correctedSSID.replaceAll('"','\\"');
+    // make wifi info
+    return `WIFI:S:${correctedSSID};T:${security.value};P:${password.value};H:${hidden.value ?? false};`;
 }
 
 // generate QR code
@@ -108,7 +106,7 @@ const generate = () => {
     const type = (tabs.querySelector('sl-tab[active]') as Shoelace.SlTab).panel;
     const qr = document.getElementById('qr') as Shoelace.SlQrCode;
     const errorCorrection = document.getElementById('error-correction') as Shoelace.SlSelect;
-    qr.errorCorrection = errorCorrection.value[0] as 'L' | 'M' | 'Q' | 'H';
+    qr.errorCorrection = errorCorrection.value as 'L' | 'M' | 'Q' | 'H';
     console.log(type);
     let flag = false;
     const abort = () => {
@@ -120,13 +118,13 @@ const generate = () => {
         console.warn('Invalid input');
         return;
     }
-    if (output instanceof Shoelace.SlInput) {
+    if (output instanceof SlInput) {
         if (!output.reportValidity()) {
             return;
         }
         output = output.value;
     }
-    if (output instanceof Shoelace.SlSelect) {
+    if (output instanceof SlSelect) {
         if (!output.reportValidity()) {
             return;
         }
