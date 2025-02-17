@@ -40,3 +40,6 @@ sl-select[data-invalid]::part(combobox) {
     justify-content: center;
     align-items: center;
 }
+* {
+    font-family: var(--sl-font-sans)
+}
