@@ -1,0 +1,33 @@
+sl-tab-panel {
+    --padding: var(--sl-spacing-medium) var(--sl-spacing-medium);
+}
+.padded {
+    padding: var(--sl-spacing-medium) var(--sl-spacing-small);
+}
+.margin {
+    margin: var(--sl-spacing-medium) var(--sl-spacing-small);
+}
+
+
+:where(.options) {
+    display: flex;
+}
+
+.options {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sl-spacing-medium);
+    margin-bottom: var(--sl-spacing-medium);
+}
+
+sl-input[data-invalid]::part(base),
+sl-select[data-nvalid]::part(combobox) {
+    border-color: var(--sl-color-danger-600);
+}
+[data-invalid]::part(form-control-label),
+[data-invalid]::part(form-control-help-text) {
+    color: var(--sl-color-danger-600);
+}
+[hidden] {
+    display: none !important;
+}
