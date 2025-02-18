@@ -5,8 +5,47 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>QR Code maker</title>
         <meta name="description" content="Generate QR codes for various types of data">
+        <style>
+            #loading {
+                z-index: 999999999999999999999;
+                position: fixed;
+                inset: 0;
+                background: #fff;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                font-size: 2rem;
+                font-family: sans-serif;
+            }
+            #loading h3 {
+                font-size: 3rem;
+                margin-bottom: 0.2rem;
+            }
+            @media (prefers-color-scheme: dark) {
+                #loading {
+                    background: #112;
+                    color: #fff;
+                }
+            }
+        </style>
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
+        <div id="loading">
+            <h3>QR Code maker</h3>
+            <strong>Loading...</strong>
+            <div id="load-log">
+                
+            </div>
+        </div>
+        <sl-select id="theme-selector" value="system">
+            <sl-visually-hidden part="label">Theme</sl-visually-hidden>
+            <sl-option value="light"><sl-icon name="sun-fill" slot="prefix"></sl-icon> Light</sl-option>
+            <sl-option value="dark"><sl-icon name="moon-fill" slot="prefix"></sl-icon> Dark</sl-option>
+            <sl-divider></sl-divider>
+            <sl-option value="system"><sl-icon name="circle-half" slot="prefix"></sl-icon> System</sl-option>
+        </sl-select>
         <h1 class="centered">QR Code maker</h1>
         <sl-tab-group id="type-selector">
             <sl-tab slot="nav" panel="text">Text</sl-tab>
@@ -75,8 +114,8 @@
                 <sl-option value="H">High (~30%)</sl-option>
             </sl-select>
             <sl-button id="generate">Generate</sl-button>
-            <sl-qr-code id="qr" hidden error-correction="M"></sl-qrcode>
-            <sl-alert id="error" type="danger" hidden>
+            <sl-qr-code id="qr" hidden error-correction="M"></sl-qr-code>
+            <sl-alert id="error" variant="danger">
                 <sl-icon slot="icon" name="x-circle"></sl-icon>
                 <div id="error-message"></div>
             </sl-alert>

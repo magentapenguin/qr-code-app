@@ -1,3 +1,6 @@
+@import '@shoelace-style/shoelace/dist/themes/light.css';
+@import '@shoelace-style/shoelace/dist/themes/dark.css';
+
 sl-tab-panel {
     --padding: var(--sl-spacing-medium) var(--sl-spacing-medium);
 }
@@ -42,4 +45,65 @@ sl-select[data-invalid]::part(combobox) {
 }
 * {
     font-family: var(--sl-font-sans)
+}
+#theme-selector {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+sl-qr-code::part(base) {
+    image-rendering: pixelated;
+    width: 100%;
+    height: unset;
+}
+@supports (image-rendering: crisp-edges) {
+    sl-qr-code::part(base) {
+        image-rendering: crisp-edges;
+    }
+}
+
+#loading {
+    z-index: 999999999999999999999;
+    position: fixed;
+    inset: 0;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+}
+#load-log {
+    display: flex;
+    flex-direction: column-reverse;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    padding: 0.5rem;
+    max-height: 30vh;
+    max-width: 50vw;
+    width: 20rem;
+    overflow: hidden;
+    font-size: 0.8rem;
+    mask: linear-gradient(0deg, #000 80%, transparent 100%);
+}
+@media (prefers-color-scheme: dark) {
+    #loading {
+        background: #112;
+        color: #fff;
+    }
+}
+.loaded #loading {
+    animation: fade-out 0.5s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+@keyframes fade-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+        display: none;
+    }    
 }
