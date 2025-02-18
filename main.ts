@@ -99,7 +99,7 @@ data['wifi'] = (abort) => {
     return `WIFI:S:${correctedSSID};T:${security.value};P:${password.value};H:${hidden.value ?? false};`;
 }
 
-data['contact'] = () => {
+data['contact'] = (abort) => {
     const name = document.getElementById('contact-name') as Shoelace.SlInput;
     const phone = document.getElementById('contact-phone') as Shoelace.SlInput;
     const email = document.getElementById('contact-email') as Shoelace.SlInput;
@@ -107,10 +107,12 @@ data['contact'] = () => {
     const url = document.getElementById('contact-url') as Shoelace.SlInput;
     const org = document.getElementById('contact-org') as Shoelace.SlInput;
     const title = document.getElementById('contact-title') as Shoelace.SlInput;
-    //const note = document.getElementById('contact-note') as Shoelace.SlInput;
+    // const note = document.getElementById('contact-note') as Shoelace.SlInput;
     const contact = [] as string[];
-    if (name.value) {
+    if (name.reportValidity()) {
         contact.push('N:'+name.value+';');
+    } else {
+        return abort()
     }
     if (phone.value) {
         contact.push('TEL:'+phone.value+';');
@@ -134,9 +136,11 @@ data['contact'] = () => {
     if (title.value) {
         contact.push('TITLE:'+title.value+';');
     }
-    /*if (note.value) {
+    /*
+    if (note.value) {
         contact.push('NOTE:'+note.value+';');
-    }*/
+    }
+    */
     return `MECARD:${contact.join('')};`;
 }
 
