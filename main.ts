@@ -17,7 +17,6 @@ registerIconLibrary('default', {
     mutator: svg => svg.setAttribute('fill', 'currentColor')
 });
 
-
 const data = {} as Record<string, (abort: ()=>string) => string | Shoelace.SlInput | Shoelace.SlSelect>;
 
 // text
@@ -100,6 +99,47 @@ data['wifi'] = (abort) => {
     return `WIFI:S:${correctedSSID};T:${security.value};P:${password.value};H:${hidden.value ?? false};`;
 }
 
+data['contact'] = () => {
+    const name = document.getElementById('contact-name') as Shoelace.SlInput;
+    const phone = document.getElementById('contact-phone') as Shoelace.SlInput;
+    const email = document.getElementById('contact-email') as Shoelace.SlInput;
+    const address = document.getElementById('contact-address') as Shoelace.SlInput;
+    const url = document.getElementById('contact-url') as Shoelace.SlInput;
+    const org = document.getElementById('contact-org') as Shoelace.SlInput;
+    const title = document.getElementById('contact-title') as Shoelace.SlInput;
+    //const note = document.getElementById('contact-note') as Shoelace.SlInput;
+    const contact = [] as string[];
+    if (name.value) {
+        contact.push('N:'+name.value+';');
+    }
+    if (phone.value) {
+        contact.push('TEL:'+phone.value+';');
+    }
+    if (email.value) {
+        contact.push('EMAIL:'+email.value+';');
+    }
+    if (address.value) {
+        contact.push('ADR:'+address.value+';');
+    }
+    if (url.value) {
+        if (/^.*:\/\//gm.test(url.value)) {
+            contact.push('URL:'+url.value+';');
+        } else {
+            contact.push('URL:https://'+url.value+';');
+        }
+    }
+    if (org.value) {
+        contact.push('ORG:'+org.value+';');
+    }
+    if (title.value) {
+        contact.push('TITLE:'+title.value+';');
+    }
+    /*if (note.value) {
+        contact.push('NOTE:'+note.value+';');
+    }*/
+    return `MECARD:${contact.join('')};`;
+}
+
 // generate QR code
 const generate = () => {
     const tabs = document.getElementById('type-selector') as Shoelace.SlTabGroup;
@@ -113,7 +153,12 @@ const generate = () => {
         flag = true;
         return ''
     };
-    let output = data[type](abort);
+    const func = data[type];
+    if (typeof func !== 'function' ) {
+        console.warn('Invalid input');
+        return;
+    }
+    let output = func(abort);
     if (flag) {
         console.warn('Invalid input');
         return;
