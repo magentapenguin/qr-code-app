@@ -52,11 +52,11 @@ sl-select:focus-within[data-invalid]::part(combobox) {
     font-family: var(--sl-font-sans)
 }
 #theme-selector {
-    position: fixed;
+    position: absolute;
     top: var(--sl-spacing-medium);
     right: var(--sl-spacing-medium);
     z-index: 1000;
-    width: 18ch;
+    width: 15ch;
 }
 
 sl-qr-code::part(base) {
@@ -102,7 +102,6 @@ sl-tab > sl-icon {
     font-size: 1.1em;
 }
 .sl-theme-dark {
-    --sl-color-gray-0: rgb(8 16 36);
     --sl-color-gray-50: rgb(24 37 73);
     --sl-color-gray-100: rgb(51 62 94);
     --sl-color-gray-200: rgb(79 89 116);
@@ -114,7 +113,6 @@ sl-tab > sl-icon {
     --sl-color-gray-800: rgb(220 222 227);
     --sl-color-gray-900: rgb(235 236 239);
     --sl-color-gray-950: rgb(249 249 250);
-    --sl-color-gray-1000: rgb(255 255 255);
     --sl-color-neutral-0: rgb(8 16 36);
     --sl-color-neutral-50: rgb(24 37 73);
     --sl-color-neutral-100: rgb(51 62 94);
@@ -128,15 +126,15 @@ sl-tab > sl-icon {
     --sl-color-neutral-900: rgb(235 236 239);
     --sl-color-neutral-950: rgb(249 249 250);
     --sl-color-neutral-1000: rgb(255 255 255);
-    background-color: var(--sl-color-gray-0);
     --sl-input-border-color: var(--sl-color-gray-100);
-    --sl-panel-background-color: var(--sl-color-gray-0);
+    --sl-panel-background-color: var(--sl-color-neutral-0);
     --sl-panel-border-color: var(--sl-color-gray-100);
     --sl-input-border-color-disabled: var(--sl-color-gray-300);
     --sl-input-background-color-disabled: var(--sl-color-gray-50);
 }
 :root {
     --sl-input-border-color-hover: var(--sl-color-primary-500);
+    background-color: var(--sl-color-neutral-0);
 }
 sl-select:hover {
     --sl-input-border-color: var(--sl-input-border-color-hover);

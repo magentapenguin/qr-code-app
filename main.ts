@@ -84,10 +84,10 @@ data['email'] = (abort) => {
         return abort();
     }
     if (subject.value) {
-        params.append('subject', subject.value);
+        params.append('subject', subject.value.replaceAll('\n','%0A').replaceAll(' ','%20'));
     }
     if (body.value) {
-        params.append('body', body.value);
+        params.append('body', body.value.replaceAll('\n','%0A').replaceAll(' ','%20'));
     }
     return `mailto:${email.value}` + (params.toString() ? `?${params.toString()}` : '');
 }
@@ -108,7 +108,7 @@ data['sms'] = (abort) => {
         return abort();
     }
     const message = document.getElementById('sms-message') as Shoelace.SlInput;
-    return `sms:${phone.value}` + (message.value ? `:${message.value}` : '');
+    return `sms:${phone.value}` + (message.value ? `:${message.value.replaceAll('\n','%0A').replaceAll(' ','%20')}` : '');
 }
 
 // wifi
@@ -183,11 +183,43 @@ data['contact'] = (abort) => {
     return `MECARD:${contact.join('')};`;
 }
 
+const qr = document.getElementById('qr') as Shoelace.SlQrCode;
+document.addEventListener('themechange', () => {
+    const stylemap = document.documentElement.computedStyleMap();
+    if (stylemap.has('color')) {
+        qr.fill = stylemap.get('color')!.toString();
+    }
+    if (stylemap.has('background-color')) {
+        qr.background = stylemap.get('background-color')!.toString();
+        qr.shadowRoot!.querySelector('canvas')!.style.border = `0.4rem solid ${qr.background}`;
+    }
+    // if the background color is dark, swap the colors
+    const bg = stylemap.get('background-color')!.toString();
+    const lum = (r: number, g: number, b: number) => {
+        const a = [r, g, b].map((v) => {
+            v /= 255;
+            return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        });
+        return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+    }
+    console.log(bg);
+    const rgb = bg.match(/\d+/g);
+    if (rgb) {
+        const l = lum(parseInt(rgb[0]), parseInt(rgb[1]), parseInt(rgb[2]));
+        console.log(l);
+        if (l < 0.179) {
+            let temp = qr.fill;
+            qr.fill = qr.background;
+            qr.background = temp;
+            qr.shadowRoot!.querySelector('canvas')!.style.border = `0.4rem solid ${qr.background}`;
+        }
+    }
+});
+
 // generate QR code
 const generate = () => {
     const tabs = document.getElementById('type-selector') as Shoelace.SlTabGroup;
     const type = (tabs.querySelector('sl-tab[active]') as Shoelace.SlTab).panel;
-    const qr = document.getElementById('qr') as Shoelace.SlQrCode;
     const errorCorrection = document.getElementById('error-correction') as Shoelace.SlSelect;
     qr.errorCorrection = errorCorrection.value as 'L' | 'M' | 'Q' | 'H';
     const showerror = (message: string) => {
