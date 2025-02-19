@@ -1,12 +1,3 @@
-import '@shoelace-style/shoelace/dist/components/button/button.js';
-import SlSelect from '@shoelace-style/shoelace/dist/components/select/select.js';
-import '@shoelace-style/shoelace/dist/components/tab/tab.js';
-import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
-import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
-import SlInput from '@shoelace-style/shoelace/dist/components/input/input.js';
-import '@shoelace-style/shoelace/dist/components/option/option.js';
-import '@shoelace-style/shoelace/dist/components/qr-code/qr-code.js';
-import '@shoelace-style/shoelace/dist/components/divider/divider.js';
 const loaded = [
     'sl-button',
     'sl-select',
@@ -24,27 +15,41 @@ const promises = loaded.map((name) => (async () => {
     element.textContent = `${name} loaded`;
     document.getElementById('load-log')?.prepend(element);
 })());
-promises.concat([
-    new Promise(resolve => {
-        window.addEventListener('load', () => resolve());
-    }),
-    (async () => {
-        let resoures = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
-        console.log(resoures);
-        const css = resoures.filter(entry => entry.contentType === 'text/css');
-        css.forEach(entry => {
-            const name = entry.name.split('/').pop();
-            const element = document.createElement('span');
-            element.textContent = `${name} loaded`;
-            document.getElementById('load-log')?.prepend(element);
-        });
-    })(),
-])
 Promise.allSettled(promises).then(() => {
-    document.body.classList.add('loaded');
+    const loadingscreen = document.getElementById('loading');
+    if (loadingscreen) {
+        loadingscreen.animate([
+            {opacity: 1},
+            {opacity: 0}
+        ], {
+            duration: 200,
+            easing: 'cubic-bezier(0.7, 0, 0.84, 0)',
+            fill: 'forwards'
+        }).onfinish = () => {
+            loadingscreen.remove();
+        }
+    }
 });
+const observer = new PerformanceObserver((list) => {
+    for (const entry of list.getEntries()) {
+        const element = document.createElement('span');
+        element.textContent = `${entry.name.split('/').pop()} loaded`;
+        document.getElementById('load-log')?.prepend(element);
+    }
+});
+observer.observe({entryTypes: ['resource']});
+import '@shoelace-style/shoelace/dist/components/button/button.js';
+import SlSelect from '@shoelace-style/shoelace/dist/components/select/select.js';
+import '@shoelace-style/shoelace/dist/components/tab/tab.js';
+import '@shoelace-style/shoelace/dist/components/tab-group/tab-group.js';
+import '@shoelace-style/shoelace/dist/components/tab-panel/tab-panel.js';
+import SlInput from '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/option/option.js';
+import '@shoelace-style/shoelace/dist/components/qr-code/qr-code.js';
+import '@shoelace-style/shoelace/dist/components/divider/divider.js';
 import type * as Shoelace from '@shoelace-style/shoelace';
 import { registerIconLibrary } from '@shoelace-style/shoelace';
+import './theme-select';
 
 registerIconLibrary('default', {
     resolver: name => import.meta.env.BASE_URL+`icons/${name}.svg`,
@@ -195,19 +200,19 @@ const generate = () => {
     error.open = false;
     console.log(type);
     let flag = false;
-    const abort = () => {
+    const abort = (msg?: string) => {
         flag = true;
+        showerror(msg ?? 'Invalid input');
         return ''
     };
     const func = data[type];
     if (typeof func !== 'function' ) {
-        console.warn('Invalid input');
+        console.warn('No function found for type:', type);
+        showerror('No implementation found');
         return;
     }
     let output = func(abort);
     if (flag) {
-        console.warn('Invalid input');
-        showerror('Invalid input');
         return;
     }
     if (output instanceof SlInput) {

@@ -10,7 +10,8 @@
                 z-index: 999999999999999999999;
                 position: fixed;
                 inset: 0;
-                background: #fff;
+                background: #112e;
+                color: white;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -22,12 +23,6 @@
                 font-size: 3rem;
                 margin-bottom: 0.2rem;
             }
-            @media (prefers-color-scheme: dark) {
-                #loading {
-                    background: #112;
-                    color: #fff;
-                }
-            }
         </style>
         <link rel="stylesheet" href="style.css">
     </head>
@@ -35,9 +30,7 @@
         <div id="loading">
             <h3>QR Code maker</h3>
             <strong>Loading...</strong>
-            <div id="load-log">
-                
-            </div>
+            <div id="load-log"></div>
         </div>
         <sl-select id="theme-selector" value="system">
             <sl-visually-hidden part="label">Theme</sl-visually-hidden>
@@ -48,13 +41,13 @@
         </sl-select>
         <h1 class="centered">QR Code maker</h1>
         <sl-tab-group id="type-selector">
-            <sl-tab slot="nav" panel="text">Text</sl-tab>
-            <sl-tab slot="nav" panel="url">URL</sl-tab>
-            <sl-tab slot="nav" panel="email">Email</sl-tab>
-            <sl-tab slot="nav" panel="phone">Phone</sl-tab>
-            <sl-tab slot="nav" panel="sms">SMS</sl-tab>
-            <sl-tab slot="nav" panel="wifi">WiFi</sl-tab>
-            <sl-tab slot="nav" panel="contact">Contact</sl-tab>
+            <sl-tab slot="nav" panel="text"><sl-icon name="card-text"></sl-icon> Text</sl-tab>
+            <sl-tab slot="nav" panel="url"><sl-icon name="link"></sl-icon> URL</sl-tab>
+            <sl-tab slot="nav" panel="email"><sl-icon name="envelope"></sl-icon> Email</sl-tab>
+            <sl-tab slot="nav" panel="phone"><sl-icon name="telephone"></sl-icon> Phone</sl-tab>
+            <sl-tab slot="nav" panel="sms"><sl-icon name="chat-dots"></sl-icon> SMS</sl-tab>
+            <sl-tab slot="nav" panel="wifi"><sl-icon name="wifi"></sl-icon> WiFi</sl-tab>
+            <sl-tab slot="nav" panel="contact"><sl-icon name="person-circle"></sl-icon> Contact</sl-tab>
             <sl-tab-panel name="text">
                 <sl-input label="Text" id="text" required></sl-input>
             </sl-tab-panel>
@@ -108,10 +101,10 @@
         </sl-tab-group>
         <div class="padded options">
             <sl-select label="Error correction" id="error-correction" required value="M">
-                <sl-option value="L">Low (~7%)</sl-option>
-                <sl-option value="M">Medium (~15%)</sl-option>
-                <sl-option value="Q">Quartile (~25%)</sl-option>
-                <sl-option value="H">High (~30%)</sl-option>
+                <sl-option value="L">Low (~7% recoverable)</sl-option>
+                <sl-option value="M">Medium (~15% recoverable)</sl-option>
+                <sl-option value="Q">Quartile (~25% recoverable)</sl-option>
+                <sl-option value="H">High (~30% recoverable)</sl-option>
             </sl-select>
             <sl-button id="generate">Generate</sl-button>
             <sl-qr-code id="qr" hidden error-correction="M"></sl-qr-code>
