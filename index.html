@@ -123,6 +123,10 @@
                     Foreground color
                 </div>
                 <sl-color-picker label="Foreground color" id="qr-fg-color" value="#000000" size="small"></sl-color-picker>
+                <sl-tooltip id="color-warning" placement="top" hidden>
+                    <div slot="content" id="color-warning-hover"></div>
+                    <sl-icon name="exclamation-triangle" label="warning"></sl-icon>
+                </sl-tooltip>
             </div>
             <sl-button id="generate">Generate</sl-button>
             <sl-qr-code id="qr" hidden error-correction="M"></sl-qr-code>

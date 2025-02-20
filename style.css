@@ -130,10 +130,8 @@ sl-tab>sl-icon {
 }
 
 small {
-    font-size: 0.8em;
+    font-size: 0.9em;
     color: var(--sl-color-neutral-500);
-    font-weight: var(--sl-font-weight-light);
-
 }
 
 .sl-theme-dark {
@@ -178,15 +176,25 @@ sl-select:hover {
     border: var(--sl-input-border-width) solid var(--sl-input-border-color);
     border-radius: var(--sl-input-border-radius-medium);
     height: var(--sl-input-height-medium);
+    position: relative;
 }
 
 #color-options sl-color-picker {
     margin-right: var(--sl-spacing-large);
-    margin-bottom: -3px;
+    margin-top: -2px;
 }
 
 #color-options sl-color-picker:last-child {
     margin-right: 0;
+}
+
+#color-warning sl-icon {
+    position: absolute;
+    right: var(--sl-spacing-small);
+    top: auto;
+    color: var(--sl-color-warning-600);
+    font-size: var(--sl-font-size-large);
+    cursor: pointer;
 }
 
 sl-alert[variant="info"]::part(base) {

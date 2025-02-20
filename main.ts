@@ -59,13 +59,13 @@ registerIconLibrary('default', {
     mutator: svg => svg.setAttribute('fill', 'currentColor')
 });
 
-const data = {} as Record<string, (abort: ()=>string) => string | Shoelace.SlInput | Shoelace.SlSelect>;
+const generatorMethods = {} as Record<string, (abort: ()=>string) => string | Shoelace.SlInput | Shoelace.SlSelect>;
 
 // text
-data['text'] = () => document.getElementById('text') as Shoelace.SlInput;
+generatorMethods['text'] = () => document.getElementById('text') as Shoelace.SlInput;
 
 // url
-data['url'] = (abort) => {
+generatorMethods['url'] = (abort) => {
     const url = document.getElementById('url') as Shoelace.SlInput;
     if (!url.reportValidity()) {
         return abort();
@@ -78,7 +78,7 @@ data['url'] = (abort) => {
 }
 
 // email
-data['email'] = (abort) => {
+generatorMethods['email'] = (abort) => {
     const email = document.getElementById('email') as Shoelace.SlInput;
     const subject = document.getElementById('email-subject') as Shoelace.SlInput;
     const body = document.getElementById('email-body') as Shoelace.SlInput;
@@ -96,7 +96,7 @@ data['email'] = (abort) => {
 }
 
 // phone
-data['phone'] = (abort) => {
+generatorMethods['phone'] = (abort) => {
     const phone = document.getElementById('phone') as Shoelace.SlInput;
     if (!phone.reportValidity()) {
         return abort();
@@ -105,7 +105,7 @@ data['phone'] = (abort) => {
 }
 
 // sms
-data['sms'] = (abort) => {
+generatorMethods['sms'] = (abort) => {
     const phone = document.getElementById('sms-phone') as Shoelace.SlInput;
     if (!phone.reportValidity()) {
         return abort();
@@ -115,7 +115,7 @@ data['sms'] = (abort) => {
 }
 
 // wifi
-data['wifi'] = (abort) => {
+generatorMethods['wifi'] = (abort) => {
     const ssid = document.getElementById('wifi-ssid') as Shoelace.SlInput;
     const password = document.getElementById('wifi-password') as Shoelace.SlInput;
     const security = document.getElementById('wifi-security') as Shoelace.SlSelect;
@@ -141,7 +141,7 @@ data['wifi'] = (abort) => {
     return `WIFI:S:${correctedSSID};T:${security.value};P:${password.value};H:${hidden.value ?? false};`;
 }
 
-data['contact'] = (abort) => {
+generatorMethods['contact'] = (abort) => {
     const name = document.getElementById('contact-name') as Shoelace.SlInput;
     const phone = document.getElementById('contact-phone') as Shoelace.SlInput;
     const email = document.getElementById('contact-email') as Shoelace.SlInput;
@@ -189,12 +189,80 @@ data['contact'] = (abort) => {
 const qr = document.getElementById('qr') as Shoelace.SlQrCode;
 const qrFill = document.getElementById('qr-fg-color') as Shoelace.SlColorPicker;
 const qrBg = document.getElementById('qr-bg-color') as Shoelace.SlColorPicker;
+const warning = document.getElementById('color-warning') as Shoelace.SlTooltip;
+const warningText = document.getElementById('color-warning-hover') as HTMLDivElement;
+const checkContrast = () => {
+    const fg = qrFill.value;
+    const bg = qrBg.value;
+    const luminance = (rgb: number[]) => {
+        return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+    }
+    const contrast = (l1: number, l2: number) => {
+        return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+    }
+    console.log(fg, bg);
+    // convert hex to rgb
+    const hexToRgb = (hex: string) => {
+        return [parseInt(hex.slice(1,3), 16), parseInt(hex.slice(3,5), 16), parseInt(hex.slice(5,7), 16)];
+    }
+    const fgRgb = hexToRgb(fg);
+    const bgRgb = hexToRgb(bg);
+    const fgLuminance = luminance(fgRgb);
+    const bgLuminance = luminance(bgRgb);
+    const contrastRatio = contrast(fgLuminance, bgLuminance);
+    console.log(fgLuminance, bgLuminance, contrastRatio);
+    if (contrastRatio < 4.5) {
+        warning.hidden = false;
+        warningText.innerHTML = `Contrast ratio: ${contrastRatio.toFixed(2)}. (minimum: 4.5) The QR code may be hard to scan. <strong>Click to fix.<strong>`;
+        return false;
+    } else {
+        warning.hidden = true;
+        return true;
+    }
+}
+
+warning.addEventListener('click', () => {
+    const fg = qrFill.value;
+    const bg = qrBg.value;
+    console.log(fg, bg);
+    // convert hex to rgb
+    const hexToRgb = (hex: string) => {
+        return [parseInt(hex.slice(1,3), 16), parseInt(hex.slice(3,5), 16), parseInt(hex.slice(5,7), 16)];
+    }
+    const fgRgb = hexToRgb(fg);
+    const bgRgb = hexToRgb(bg);
+    let interations = 0;
+    while (!checkContrast()) {
+        interations++;
+        if (interations > 20) {
+            console.error('Too many iterations');
+            break;
+        }
+        console.log('Iteration:', interations);
+        // update the colors
+        fgRgb[0] = Math.max(0, fgRgb[0] - 50);
+        fgRgb[1] = Math.max(0, fgRgb[1] - 50);
+        fgRgb[2] = Math.max(0, fgRgb[2] - 50);
+        qrFill.value = `#${fgRgb.map(x => x.toString(16).padStart(2, '0')).join('')}`;
+        qr.fill = qrFill.value;
+        // background should also be updated
+        bgRgb[0] = Math.min(255, bgRgb[0] + 50);
+        bgRgb[1] = Math.min(255, bgRgb[1] + 50);
+        bgRgb[2] = Math.min(255, bgRgb[2] + 50);
+        qrBg.value = `#${bgRgb.map(x => x.toString(16).padStart(2, '0')).join('')}`;
+        qr.background = qrBg.value;
+        qr.shadowRoot!.querySelector('canvas')!.style.setProperty('--qr-code-border-color', qrBg.value, 'important');
+    }
+});
+
 qrFill.addEventListener('sl-change', () => {
     qr.fill = qrFill.value;
+    checkContrast();
 });
 qrBg.addEventListener('sl-change', () => {
     qr.background = qrBg.value;
     qr.shadowRoot!.querySelector('canvas')!.style.setProperty('--qr-code-border-color', qrBg.value, 'important');
+    checkContrast();
 });
 
 
@@ -220,7 +288,7 @@ const generate = () => {
         showerror(msg ?? 'Invalid input');
         return ''
     };
-    const func = data[type];
+    const func = generatorMethods[type];
     if (typeof func !== 'function' ) {
         console.warn('No function found for type:', type);
         showerror('No implementation found');
