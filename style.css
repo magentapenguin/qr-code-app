@@ -4,9 +4,11 @@
 sl-tab-panel {
     --padding: var(--sl-spacing-medium) var(--sl-spacing-medium);
 }
+
 .padded {
     padding: var(--sl-spacing-medium) var(--sl-spacing-small);
 }
+
 .margin {
     margin: var(--sl-spacing-medium) var(--sl-spacing-small);
 }
@@ -22,6 +24,7 @@ sl-tab-panel {
     gap: var(--sl-spacing-medium);
     margin-bottom: var(--sl-spacing-medium);
 }
+
 sl-qr-code {
     align-self: center;
 }
@@ -30,40 +33,63 @@ sl-qr-code {
 sl-input[data-invalid]::part(base),
 sl-select[data-invalid]::part(combobox) {
     border-color: var(--sl-color-danger-600);
+    background-color: rgb(from var(--sl-color-danger-500) r g b / 0.05);
 }
+
 [data-invalid]::part(form-control-label),
 [data-invalid]::part(form-control-help-text) {
     color: var(--sl-color-danger-600);
 }
+
 sl-input:focus-within[data-invalid]::part(base),
 sl-select:focus-within[data-invalid]::part(combobox) {
     border-color: var(--sl-color-danger-600);
     box-shadow: 0 0 0 var(--sl-focus-ring-width) var(--sl-color-danger-300);
 }
+
 [hidden] {
     display: none !important;
 }
+
 .centered {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 }
+
+.centered>* {
+    margin: var(--sl-spacing-medium);
+    text-align: center;
+}
+
+#loading-content {
+    display: contents;
+}
+
+sl-color-picker::part(grid) {
+    border-bottom: solid var(--sl-panel-border-width) var(--sl-panel-border-color);
+}
+
 * {
     font-family: var(--sl-font-sans)
 }
+
 #theme-selector {
     position: absolute;
     top: var(--sl-spacing-medium);
     right: var(--sl-spacing-medium);
     z-index: 1000;
-    width: 15ch;
+    width: 20ch;
 }
 
 sl-qr-code::part(base) {
-    image-rendering: pixelated;
-    width: 100%;
-    height: unset;
+    --qr-code-border-color: white;
+    width: 100% !important;
+    height: unset !important;
+    border: 0.5rem solid var(--qr-code-border-color);
 }
+
 @supports (image-rendering: crisp-edges) {
     sl-qr-code::part(base) {
         image-rendering: crisp-edges;
@@ -81,6 +107,7 @@ sl-qr-code::part(base) {
     align-items: center;
     font-size: 2rem;
 }
+
 #load-log {
     display: flex;
     flex-direction: column-reverse;
@@ -97,22 +124,19 @@ sl-qr-code::part(base) {
     mask: linear-gradient(0deg, #000 80%, transparent 100%);
 }
 
-sl-tab > sl-icon {
+sl-tab>sl-icon {
     margin-right: var(--sl-spacing-x-small);
     font-size: 1.1em;
 }
+
+small {
+    font-size: 0.8em;
+    color: var(--sl-color-neutral-500);
+    font-weight: var(--sl-font-weight-light);
+
+}
+
 .sl-theme-dark {
-    --sl-color-gray-50: rgb(24 37 73);
-    --sl-color-gray-100: rgb(51 62 94);
-    --sl-color-gray-200: rgb(79 89 116);
-    --sl-color-gray-300: rgb(99 108 132);
-    --sl-color-gray-400: rgb(124 132 152);
-    --sl-color-gray-500: rgb(154 160 175);
-    --sl-color-gray-600: rgb(182 186 197);
-    --sl-color-gray-700: rgb(204 206 214);
-    --sl-color-gray-800: rgb(220 222 227);
-    --sl-color-gray-900: rgb(235 236 239);
-    --sl-color-gray-950: rgb(249 249 250);
     --sl-color-neutral-0: rgb(8 16 36);
     --sl-color-neutral-50: rgb(24 37 73);
     --sl-color-neutral-100: rgb(51 62 94);
@@ -126,19 +150,66 @@ sl-tab > sl-icon {
     --sl-color-neutral-900: rgb(235 236 239);
     --sl-color-neutral-950: rgb(249 249 250);
     --sl-color-neutral-1000: rgb(255 255 255);
-    --sl-input-border-color: var(--sl-color-gray-100);
+    --sl-input-border-color: var(--sl-color-neutral-100);
     --sl-panel-background-color: var(--sl-color-neutral-0);
-    --sl-panel-border-color: var(--sl-color-gray-100);
-    --sl-input-border-color-disabled: var(--sl-color-gray-300);
-    --sl-input-background-color-disabled: var(--sl-color-gray-50);
+    --sl-panel-border-color: var(--sl-color-neutral-100);
+    --sl-input-border-color-disabled: var(--sl-color-neutral-300);
+    --sl-input-background-color-disabled: rgb(from var(--sl-color-neutral-100) r g b / 0.2);
 }
+
 :root {
     --sl-input-border-color-hover: var(--sl-color-primary-500);
     background-color: var(--sl-color-neutral-0);
 }
+
 sl-select:hover {
     --sl-input-border-color: var(--sl-input-border-color-hover);
 }
+
 .sl-theme-dark sl-tab-group {
-    --track-color: var(--sl-color-gray-100);
+    --track-color: var(--sl-color-neutral-100);
+}
+
+#color-options {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sl-spacing-medium);
+    border: var(--sl-input-border-width) solid var(--sl-input-border-color);
+    border-radius: var(--sl-input-border-radius-medium);
+    height: var(--sl-input-height-medium);
+}
+
+#color-options sl-color-picker {
+    margin-right: var(--sl-spacing-large);
+    margin-bottom: -3px;
+}
+
+#color-options sl-color-picker:last-child {
+    margin-right: 0;
+}
+
+sl-alert[variant="info"]::part(base) {
+    background-color: rgb(from var(--sl-color-primary-600) r g b / 0.1);
+    --sl-panel-border-color: rgb(from var(--sl-color-primary-600) r g b / 0.2)
+}
+
+sl-alert[variant="success"]::part(base) {
+    background-color: rgb(from var(--sl-color-success-600) r g b / 0.1);
+    --sl-panel-border-color: rgb(from var(--sl-color-success-600) r g b / 0.2)
+}
+
+sl-alert[variant="warning"]::part(base) {
+    background-color: rgb(from var(--sl-color-warning-600) r g b / 0.1);
+    --sl-panel-border-color: rgb(from var(--sl-color-warning-600) r g b / 0.2)
+}
+
+sl-alert[variant="danger"]::part(base) {
+    background-color: rgb(from var(--sl-color-danger-600) r g b / 0.1);
+    --sl-panel-border-color: rgb(from var(--sl-color-danger-600) r g b / 0.2)
+}
+
+sl-alert[variant="neutral"]::part(base) {
+    background-color: rgb(from var(--sl-color-neutral-600) r g b / 0.1);
+    --sl-panel-border-color: rgb(from var(--sl-color-neutral-600) r g b / 0.2)
 }

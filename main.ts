@@ -47,6 +47,9 @@ import SlInput from '@shoelace-style/shoelace/dist/components/input/input.js';
 import '@shoelace-style/shoelace/dist/components/option/option.js';
 import '@shoelace-style/shoelace/dist/components/qr-code/qr-code.js';
 import '@shoelace-style/shoelace/dist/components/divider/divider.js';
+import '@shoelace-style/shoelace/dist/components/color-picker/color-picker.js';
+import '@shoelace-style/shoelace/dist/components/alert/alert.js';
+import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 import type * as Shoelace from '@shoelace-style/shoelace';
 import { registerIconLibrary } from '@shoelace-style/shoelace';
 import './theme-select';
@@ -184,37 +187,17 @@ data['contact'] = (abort) => {
 }
 
 const qr = document.getElementById('qr') as Shoelace.SlQrCode;
-document.addEventListener('themechange', () => {
-    const stylemap = document.documentElement.computedStyleMap();
-    if (stylemap.has('color')) {
-        qr.fill = stylemap.get('color')!.toString();
-    }
-    if (stylemap.has('background-color')) {
-        qr.background = stylemap.get('background-color')!.toString();
-        qr.shadowRoot!.querySelector('canvas')!.style.border = `0.4rem solid ${qr.background}`;
-    }
-    // if the background color is dark, swap the colors
-    const bg = stylemap.get('background-color')!.toString();
-    const lum = (r: number, g: number, b: number) => {
-        const a = [r, g, b].map((v) => {
-            v /= 255;
-            return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
-        });
-        return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
-    }
-    console.log(bg);
-    const rgb = bg.match(/\d+/g);
-    if (rgb) {
-        const l = lum(parseInt(rgb[0]), parseInt(rgb[1]), parseInt(rgb[2]));
-        console.log(l);
-        if (l < 0.179) {
-            let temp = qr.fill;
-            qr.fill = qr.background;
-            qr.background = temp;
-            qr.shadowRoot!.querySelector('canvas')!.style.border = `0.4rem solid ${qr.background}`;
-        }
-    }
+const qrFill = document.getElementById('qr-fg-color') as Shoelace.SlColorPicker;
+const qrBg = document.getElementById('qr-bg-color') as Shoelace.SlColorPicker;
+qrFill.addEventListener('sl-change', () => {
+    qr.fill = qrFill.value;
 });
+qrBg.addEventListener('sl-change', () => {
+    qr.background = qrBg.value;
+    qr.shadowRoot!.querySelector('canvas')!.style.setProperty('--qr-code-border-color', qrBg.value, 'important');
+});
+
+
 
 // generate QR code
 const generate = () => {
@@ -226,7 +209,7 @@ const generate = () => {
         qr.hidden = true;
         const error = document.getElementById('error') as Shoelace.SlAlert;
         error.open = true;
-        document.getElementById('error-message')!.textContent = message;
+        document.getElementById('error-message')!.innerHTML = message;
     }
     const error = document.getElementById('error') as Shoelace.SlAlert;
     error.open = false;
@@ -272,7 +255,7 @@ const generate = () => {
             console.log(imageData, imageData?.data);
             if (imageData && imageData.data[3] === 0) {
                 // if empty, hide the qr code and show the error message
-                showerror('Failed to generate QR code');
+                showerror('Failed to generate QR code!<br><small>Try reducing the error correction level or the amount of data.<small>');
             }
         }
     });

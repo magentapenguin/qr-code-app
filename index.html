@@ -28,12 +28,20 @@
     </head>
     <body>
         <div id="loading">
-            <h3>QR Code maker</h3>
-            <strong>Loading...</strong>
+            <div hidden id="loading-content">
+                <script>document.getElementById('loading-content').hidden = false;</script>
+                <h3>QR Code maker</h3>
+                <strong>Loading...</strong>
+            </div>
+            <noscript class="centered">
+                <h1>Enable JavaScript</h1>
+                <p>This app requires JavaScript to work. Please enable it and reload the page.</p>
+            </noscript>
             <div id="load-log"></div>
         </div>
         <sl-select id="theme-selector" value="system">
             <sl-visually-hidden part="label">Theme</sl-visually-hidden>
+            <sl-icon slot="prefix" name="palette-fill"></sl-icon>
             <sl-option value="light"><sl-icon name="sun-fill" slot="prefix"></sl-icon> Light</sl-option>
             <sl-option value="dark"><sl-icon name="moon-fill" slot="prefix"></sl-icon> Dark</sl-option>
             <sl-divider></sl-divider>
@@ -106,6 +114,16 @@
                 <sl-option value="Q">Quartile (~25% recoverable)</sl-option>
                 <sl-option value="H">High (~30% recoverable)</sl-option>
             </sl-select>
+            <div id="color-options">
+                <div aria-hidden="true">
+                    Background color
+                </div>
+                <sl-color-picker label="Background color" id="qr-bg-color" value="#ffffff" size="small"></sl-color-picker>
+                <div aria-hidden="true">
+                    Foreground color
+                </div>
+                <sl-color-picker label="Foreground color" id="qr-fg-color" value="#000000" size="small"></sl-color-picker>
+            </div>
             <sl-button id="generate">Generate</sl-button>
             <sl-qr-code id="qr" hidden error-correction="M"></sl-qr-code>
             <sl-alert id="error" variant="danger">
